@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div>sim assumes 1 click to take about 2 seconds + all math might not be 100% correct lol</div>
+    <div>price of an ingot is <input id="ingot" value="30000"></input></div>
+    <div>price of a black stone is <input id="blackstone" value="130000"></input></div>
+    <div>start from</div>
+    <button onclick="doTheMagic('polished')">polished</button>
+    <button onclick="doTheMagic('sturdy')">sturdy</button>
+    <button onclick="doTheMagic('sharp')">sharp</button>
+    <button onclick="doTheMagic('resplendent')">resplendent</button>
+    <div id="theArea"></div>
+    <script>
+      function rndm(min, max) {
+  		  min = Math.ceil(min);
+  		  max = Math.floor(max);
+  		  return Math.floor(Math.random() * (max - min) + min);
+	    }
+      function doTheMagic(startlevel){
+        var ingot = document.getElementById("ingot")?.value || 30000
+        var blackstone = document.getElementById("blackstone")?.value || 130000
+        var level = startlevel
+        var sturdyClicks = 0,       sturdySuccess = 0, sturdyDown = 0,
+            sharpClicks = 0,        sharpSuccess = 0, sharpDown = 0,
+            resplendentClicks = 0,  resplendentSuccess = 0
+            splendidClicks = 0,     splendidSuccess = 0 
+        //ingot amount for polishing
+        var polishedH = 111, polishedF = 221,
+            sturdyH = 148, sturdyF = 295,
+            sharpH = 184, sharoF = 368,
+            resplendentH = 221, resplendentF = 442
+        var lol = true
+
+        while(lol){
+          switch (level) {
+            case "polished": {
+              if(rndm(1,1000) <= 36){
+                sturdyClicks++
+                sturdySuccess++
+                level = "sturdy"
+              } else sturdyClicks++
+            } break;
+            case "sturdy": {
+              if(rndm(1,1000) <= 42){
+                sharpClicks++
+                sharpSuccess++
+                level = "sharp"
+              } else {
+                sharpClicks++
+                if(rndm(1,100) <= 50) {
+                  level = startlevel
+                  sturdyDown++
+                }
+              }
+            } break;
+            case "sharp": {
+              if(rndm(1,100) <= 3){
+                resplendentClicks++
+                resplendentSuccess++
+                level = "resplendent"
+              } else {
+                resplendentClicks++
+                if(rndm(1,100) <= 60) {
+                  level = startlevel
+                  sharpDown++
+                }
+              }
+            } break;
+            case "resplendent": {
+              if(rndm(1,100) <= 3){
+                splendidClicks++
+                splendidSuccess++
+                level = "splendid"
+              } else {
+                splendidClicks++
+                if(rndm(1,100) <= 70) level = startlevel
+              }
+            } break;
+            case "splendid": {
+              var totalTaps = sturdyClicks + sharpClicks + resplendentClicks + splendidClicks
+              var totalIngots = ingot * (
+                                (sturdyClicks * polishedH) + (sturdyDown * polishedH) +
+                                (sharpClicks * sturdyH) + (sturdySuccess * sturdyH) + (sharpDown * sturdyH) +
+                                (resplendentClicks * sharpH) + (sharpSuccess * sharpH) +
+                                (splendidClicks * resplendentH) + (resplendentSuccess * resplendentH)
+                                )
+
+              document.getElementById("theArea").innerHTML = 
+                `<p>
+                  Sturdy: ${sturdySuccess + "/" + sturdyClicks} <br>
+                  Sharp: ${sharpSuccess + "/" + sharpClicks} <br>
+                  Resplendent: ${resplendentSuccess + "/" + resplendentClicks} <br>
+                  Splendid: ${splendidSuccess + "/" + splendidClicks} <br>
+                  Total taps: ${totalTaps} <br><br>
+                  Cost in blackstones: ${Math.round(totalTaps * blackstone / 1_000_000_000)}b <br>
+                  Cost in ingots: ${Math.round(totalIngots / 1_000_000_000)}b <br>
+                  Cost in time: ${Math.round(totalTaps * 2 / 60 / 60)}h
+                </p>`
+              lol = false
+            } break;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
